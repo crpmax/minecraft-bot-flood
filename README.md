@@ -12,3 +12,9 @@ so they will time out after 30 seconds by default.
 
 ### Usage
 `php minecraft-bot-flood.php <ip> <port> <count>`
+
+### Some showcase
+
+![Command line usage](https://up.frantajaros.cz/62t1qsxmn1.gif "Command line usage")
+
+![Connected bots](https://up.frantajaros.cz/2uqotmk05l "Connected bots")
