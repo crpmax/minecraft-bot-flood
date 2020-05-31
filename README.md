@@ -1,6 +1,6 @@
-##PHP Minecraft bot flood stress tester
+## PHP Minecraft bot flood stress tester
 
-###Features
+### Features
 * Connect a lot of bots very fast
 * [WIP] Use proxies
 * [WIP] Other settings
