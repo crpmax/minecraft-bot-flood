@@ -16,8 +16,8 @@
 //Check script arguments
 $argc == 4 || exit("Usage: php $argv[0] <ip> <port> <count>");
 
-//Minecraft protocol version (47 = 1.8.x, 340 = 1.12.2, 498 = 1.14.4 ...)
-$proto = 47;
+//Minecraft protocol version (47 = 1.8.x, 340 = 1.12.2, 498 = 1.14.4, 754 = 1.16.4 ...)
+$proto = 754;
 
 $ip = $argv[1];
 $port = intval($argv[2]);
@@ -27,7 +27,7 @@ $sockets = [];
 
 //Make handshake packet
 $data = "\x00";
-$data .= pack("c", $proto);
+$data .= makeVarInt($proto);
 $data .= pack('c', strlen($ip)) . $ip;
 $data .= pack('n', $port);
 $data .= "\x02";
@@ -67,3 +67,19 @@ echo "\rAll $count bots connected, waiting till they drop" . PHP_EOL;
 
 //Wait 33 seconds till all bots are timed out
 sleep(33);
+
+function makeVarInt($data) {
+    if ($data < 0x80) {
+        return pack('C', $data);
+    }
+
+    $bytes = [];
+    while ($data > 0) {
+        $bytes[] = 0x80 | ($data & 0x7f);
+        $data >>= 7;
+    }
+
+    $bytes[count($bytes)-1] &= 0x7f;
+
+    return call_user_func_array('pack', array_merge(array('C*'), $bytes));
+}
