@@ -1,4 +1,5 @@
 ## PHP Minecraft bot flood stress tester
+**⚠ Please check out my newer and better app - [mc-bots](https://github.com/crpmax/mc-bots)**
 
 ### Features
 * Connect a lot of bots very fast
