@@ -15,9 +15,11 @@ so they will time out after 30 seconds by default.
 `php minecraft-bot-flood.php <ip> <port> <count>`
 
 The script should support all major versions of Minecraft.
-The default protocol version is 754 - for MC 1.16.4,
+The default protocol version is 758 - for MC 1.18.2,
 you can change the `$proto` variable to your needs.
 You can find the protocol version list [here](https://wiki.vg/Protocol_version_numbers).
+
+
 
 ### Some showcase
 
