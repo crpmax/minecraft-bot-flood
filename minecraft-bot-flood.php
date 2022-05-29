@@ -9,7 +9,7 @@
  * 
  * @author CreeperMaxCZ <creepermaxcz@gmail.com>
  * 
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 
@@ -17,7 +17,7 @@
 $argc == 4 || exit("Usage: php $argv[0] <ip> <port> <count>");
 
 //Minecraft protocol version (47 = 1.8.x, 340 = 1.12.2, 498 = 1.14.4, 754 = 1.16.4 ...)
-$proto = 754;
+$proto = 758;
 
 $ip = $argv[1];
 $port = intval($argv[2]);
@@ -36,7 +36,9 @@ $handshake = pack('c', strlen($data)) . $data;
 for ($i = 1; $i <= $count; $i++) {
 
     //Generate random nickname
-    $nick = bin2hex(openssl_random_pseudo_bytes(5));
+    //Do not use openssl, because people have problems installing this extension :(
+    //$nick = bin2hex(openssl_random_pseudo_bytes(5));
+    $nick = generateRandomString(16);
 
     //Create TCP socket
     $socket = @stream_socket_client("tcp://$ip:$port", $errno, $errstr, 10);
@@ -82,4 +84,15 @@ function makeVarInt($data) {
     $bytes[count($bytes)-1] &= 0x7f;
 
     return call_user_func_array('pack', array_merge(array('C*'), $bytes));
+}
+
+//From: https://stackoverflow.com/questions/4356289/php-random-string-generator
+function generateRandomString($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
 }
