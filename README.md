@@ -11,15 +11,18 @@ it can connect a lot of bots very fast.
 These bots will not respond to any server packets,
 so they will time out after 30 seconds by default.
 
+### Installation
+You need at least PHP version 5.  
+Download the script minecraft-bot-flood.php.
+
 ### Usage
-`php minecraft-bot-flood.php <ip> <port> <count>`
+`php minecraft-bot-flood.php <protoversion> <ip> <port> <count>`
+
+e.g. for MC 1.20.4:  
+`php minecraft-bot-flood.php 765 localhost 25565 10`  
 
 The script should support all major versions of Minecraft.
-The default protocol version is 758 - for MC 1.18.2,
-you can change the `$proto` variable to your needs.
 You can find the protocol version list [here](https://wiki.vg/Protocol_version_numbers).
-
-
 
 ### Some showcase
 
